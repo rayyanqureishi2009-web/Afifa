@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Afifa! ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --pink: #ff4d6d; --dark-pink: #c9184a; --bg: #fff0f3; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); text-align: center; color: #590d22; overflow-x: hidden; }
+        .screen { height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; position: relative; }
+        #screen1 { display: flex; }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: var(--dark-pink); margin: 10px; }
+        .btn { background: var(--pink); color: white; border: none; padding: 15px 35px; border-radius: 50px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: 0.3s; box-shadow: 0 4px 15px rgba(255,77,109,0.3); }
+        .btn:hover { transform: scale(1.05); background: var(--dark-pink); }
+        
+        /* Cake & Memory Stars */
+        .cake { font-size: 120px; cursor: pointer; transition: transform 0.3s; }
+        .star { font-size: 45px; cursor: pointer; margin: 15px; display: inline-block; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        #mem-display { font-weight: 600; color: var(--dark-pink); margin: 20px; min-height: 30px; font-style: italic; font-size: 1.2rem; }
+
+        /* Scratch Card */
+        #scratch-box { position: relative; width: 300px; height: 150px; background: white; border: 3px dashed var(--pink); margin: 20px auto; border-radius: 15px; overflow: hidden; }
+        #scratch-canvas { position: absolute; top: 0; left: 0; touch-action: none; cursor: crosshair; z-index: 2; }
+        .hidden-gift { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-weight: bold; font-size: 1.3rem; color: var(--dark-pink); position: absolute; z-index: 1; }
+
+        /* Credits Scroll */
+        .credits-wrap { height: 180px; overflow: hidden; position: relative; width: 100%; max-width: 320px; background: rgba(255,255,255,0.6); border-radius: 15px; padding: 15px; }
+        .credits-inner { position: absolute; width: 100%; animation: scrollText 12s linear forwards; }
+        @keyframes scrollText { from { top: 100%; } to { top: -160%; } }
+
+        /* Finale Elements */
+        .particle { position: absolute; bottom: -60px; animation: riseUp 5s linear forwards; font-size: 35px; z-index: 99; }
+        @keyframes riseUp { to { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+        #finale-overlay { position: fixed; inset: 0; background: white; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--dark-pink); text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <audio id="mainMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3" type="audio/mpeg">
+    </audio>
+
+    <section id="screen1" class="screen">
+        <h1>Happy Birthday Afifa! 🎂</h1>
+        <p>Your brother has a surprise for you...</p>
+        <button class="btn" onclick="initApp()">Tap to Start ✨</button>
+    </section>
+
+    <section id="screen2" class="screen">
+        <h2>Step 2: Cut the Cake!</h2>
+        <div class="cake" onclick="go(3)">🎂</div>
+        <p>Afifa, tap the cake to proceed!</p>
+    </section>
+
+    <section id="screen3" class="screen">
+        <h2>Step 3: Little Memories 🌟</h2>
+        <div id="mem-display">Tap a star to see a message</div>
+        <div>
+            <span class="star" onclick="sh('Thanks for being the best sister! ❤️')">⭐</span>
+            <span class="star" onclick="sh('Its your day, enjoy it to the fullest! 🎈')">⭐</span>
+        </div>
+        <button class="btn" onclick="go(4)">Next Level</button>
+    </section>
+
+    <section id="screen4" class="screen">
+        <h2>Step 4: Scratch Your Gift! 🎁</h2>
+        <div id="scratch-box">
+            <div class="hidden-gift">Gift enjoy karo, Afifa! 🥳</div>
+            <canvas id="scratch-canvas" width="300" height="150"></canvas>
+        </div>
+        <button class="btn" onclick="go(6)">The Final Finale</button>
+    </section>
+
+    <section id="screen6" class="screen">
+        <h2>The Grand Finale 📜</h2>
+        <div class="credits-wrap">
+            <div class="credits-inner">
+                <p>Dear Afifa,</p>
+                <p>You are the most trusted person in my life.</p>
+                <p>In a world of fakes,</p>
+                <p>it's hard to find someone true like you.</p>
+                <p>Thanks for always being there.</p>
+                <p>May Allah bless you always!</p>
+            </div>
+        </div>
+        <button class="btn" onclick="boom()">Celebrate! 🎉</button>
+    </section>
+
+    <div id="finale-overlay">
+        Created by Maham Nawaz <br> for Afifa ❤️
+    </div>
+
+    <script>
+        const audio = document.getElementById('mainMusic');
+
+        function initApp() {
+            audio.play().catch(() => console.log("Audio needs user tap first"));
+            go(2);
+        }
+
+        function go(n) {
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+            const next = document.getElementById('screen' + n);
+            if(next) next.style.display = 'flex';
+            if(n === 4) setupScratch();
+        }
+
+        function sh(msg) { document.getElementById('mem-display').innerText = msg; }
+
+        function setupScratch() {
+            const can = document.getElementById('scratch-canvas');
+            const ctx = can.getContext('2d');
+            ctx.fillStyle = '#C0C0C0';
+            ctx.fillRect(0, 0, 300, 150);
+            ctx.globalCompositeOperation = 'destination-out';
+
+            const work = (e) => {
+                const r = can.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - r.left;
+                const y = (e.clientY || e.touches[0].clientY) - r.top;
+                ctx.beginPath(); ctx.arc(x, y, 25, 0, 6.28); ctx.fill();
+            };
+            can.addEventListener('mousemove', work);
+            can.addEventListener('touchmove', work);
+        }
+
+        function boom() {
+            for(let i=0; i<40; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.innerText = i%2==0 ? '🎈' : '❤️';
+                p.style.left = Math.random()*100 + 'vw';
+                p.style.animationDelay = Math.random()*2 + 's';
+                document.body.appendChild(p);
+            }
+            setTimeout(() => {
+                document.getElementById('finale-overlay').style.display = 'flex';
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
+
